@@ -422,6 +422,7 @@ function test_combo(
       threshold=train_threshold,
       tokenized=n_grams_tokenized,
       sep_token=n_grams_sep_token,
+      start_end_token=start_end_token,
       keep_sep=n_grams_keep_sep,
       target_col=n_grams_target_col,
       issparse=issparse,
@@ -449,6 +450,7 @@ function test_combo(
       max_tolerance=val_max_tolerance,
       tokenized=n_grams_tokenized,
       sep_token=n_grams_sep_token,
+      start_end_token=start_end_token,
       keep_sep=n_grams_keep_sep,
       target_col=n_grams_target_col,
       issparse=issparse,
@@ -466,6 +468,7 @@ function test_combo(
       cue_obj_train.gold_ind,
       max_t=max_t,
       n_neighbors=train_n_neighbors,
+      start_end_token=start_end_token,
       verbose=verbose
       )
 
@@ -480,6 +483,7 @@ function test_combo(
       cue_obj_train.gold_ind,
       max_t=max_t,
       n_neighbors=val_n_neighbors,
+      start_end_token=start_end_token,
       verbose=verbose
       )
   end

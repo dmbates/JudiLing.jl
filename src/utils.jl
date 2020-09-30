@@ -131,7 +131,8 @@ function iscomplete(
   a::Array,
   i2f::Dict;
   tokenized=false::Bool,
-  sep_token=nothing::Union{Nothing, String, Char}
+  sep_token=nothing::Union{Nothing, String, Char},
+  start_end_token="#"::Union{String, Char}
   )::Bool
 
   ngram = i2f[a[end]]
@@ -142,7 +143,7 @@ function iscomplete(
     last_w = split(ngram, "")[end]
   end
 
-  last_w == "#"
+  last_w == start_end_token
 end
 
 """
@@ -152,7 +153,8 @@ function isstart(
   c::Int64,
   i2f::Dict;
   tokenized=false::Bool,
-  sep_token=nothing::Union{Nothing, String, Char}
+  sep_token=nothing::Union{Nothing, String, Char},
+  start_end_token="#"::Union{String, Char}
   )::Bool
 
   ngram = i2f[c]
@@ -163,7 +165,7 @@ function isstart(
     start_w = split(ngram, "")[1]
   end
 
-  start_w == "#"
+  start_w == start_end_token
 end
 
 """

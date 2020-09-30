@@ -47,6 +47,7 @@ One sequence finding algorithm used discrimination learning for the position of 
 - `grams::Int64=3`: the number of grams for cues
 - `tokenized::Bool=false`: if true, the dataset target is assumed to be tokenized
 - `sep_token::Union{Nothing, String, Char}=nothing`: separator
+- `start_end_token="#"::Union{String, Char}`: start and end token in boundary cues
 - `keep_sep::Bool=false`:if true, keep separators in cues
 - `target_col::Union{String, :Symbol}=:Words`: the column name for target strings
 - `issparse::Symbol=:auto`: control of whether output of Mt matrix is a dense matrix or a sparse matrix
@@ -153,6 +154,7 @@ function learn_paths(
   grams=3::Int64,
   tokenized=false::Bool,
   sep_token=nothing::Union{Nothing, String, Char},
+  start_end_token="#"::Union{String, Char},
   keep_sep=false::Bool,
   target_col="Words"::String,
   issparse=:auto::Symbol,
@@ -279,11 +281,21 @@ function learn_paths(
         working_q[j] = Queue{Tuple{Vector{Int64},Int64}}()
         for c in candidates_t
           # check whether a n-gram is a start n-gram
-          if isstart(c, i2f, tokenized=tokenized, sep_token=sep_token)
+          if isstart(
+            c,
+            i2f,
+            tokenized=tokenized,
+            sep_token=sep_token,
+            start_end_token=start_end_token)
             a = Int64[]
             push!(a, c)
             # check whether this n-gram is both start and complete
-            if iscomplete(a, i2f, tokenized=tokenized, sep_token=sep_token)
+            if iscomplete(
+              a,
+              i2f,
+              tokenized=tokenized,
+              sep_token=sep_token,
+              start_end_token=start_end_token)
               push!(res[j], (a,0))
             else
               enqueue!(working_q[j], (a,0))
@@ -294,11 +306,21 @@ function learn_paths(
         if is_tolerant && 0 < max_tolerance
           for c in candidates_t_tlr
             # check whether a n-gram is a start n-gram
-            if isstart(c, i2f, tokenized=tokenized, sep_token=sep_token)
+            if isstart(
+              c,
+              i2f,
+              tokenized=tokenized,
+              sep_token=sep_token,
+              start_end_token=start_end_token)
               a = Int64[]
               push!(a, c)
               # check whether this n-gram is both start and complete
-              if iscomplete(a, i2f, tokenized=tokenized, sep_token=sep_token)
+              if iscomplete(
+                a,
+                i2f,
+                tokenized=tokenized,
+                sep_token=sep_token,
+                start_end_token=start_end_token)
                 push!(res[j], (a,1))
               else
                 enqueue!(working_q[j], (a,1))
@@ -366,6 +388,7 @@ the n-grams of that which are close to the targets.
 - `grams::Int64=3`: the number of grams for cues
 - `tokenized::Bool=false`: if true, the dataset target is assumed to be tokenized
 - `sep_token::Union{Nothing, String, Char}=nothing`: separator
+- `start_end_token="#"::Union{String, Char}`: start and end token in boundary cues
 - `target_col::Union{String, :Symbol}=:Words`: the column name for target strings
 - `verbose::Bool=false`: if true, more information is printed
 
@@ -419,6 +442,7 @@ function build_paths(
   grams=3::Int64,
   tokenized=false::Bool,
   sep_token=nothing::Union{Nothing, String, Char},
+  start_end_token="#"::Union{String, Char},
   target_col=:Words::Union{String, Symbol},
   verbose=false::Bool
   )::Vector{Vector{Result_Path_Info_Struct}}
@@ -458,7 +482,12 @@ function build_paths(
     working_q = Queue{Array{Int64, 1}}()
     for c in candidates_t
       # check whether a n-gram is a start n-gram
-      if isstart(c, i2f, tokenized=tokenized, sep_token=sep_token)
+      if isstart(
+        c,
+        i2f,
+        tokenized=tokenized,
+        sep_token=sep_token,
+        start_end_token=start_end_token)
         a = Int64[]
         push!(a, c)
         # check whether this n-gram is both start and complete
@@ -480,7 +509,12 @@ function build_paths(
             a_copy = deepcopy(a)
             push!(a_copy, c)
             # if the path is complete then move it to result list
-            if iscomplete(a_copy, i2f, tokenized=tokenized, sep_token=sep_token)
+            if iscomplete(
+              a_copy,
+              i2f,
+              tokenized=tokenized,
+              sep_token=sep_token,
+              start_end_token=start_end_token)
               push!(res[j], (a_copy,0))
             else
               # otherwise enqueue it to the next timestep
